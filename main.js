@@ -4,7 +4,15 @@ document.addEventListener("click", function (event) {
     return;
   }
   var action = actionButton.getAttribute("data-action");
-  console.log("Bottom action clicked:", action);
+  if (action === "process") {
+    window.location.href = "process.html";
+  } else if (action === "report") {
+    window.location.href = "report.html";
+  } else if (action === "review") {
+    window.location.href = "review.html";
+  } else {
+    console.log("Bottom action clicked:", action);
+  }
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -43,7 +51,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var uploadButton = document.getElementById("btn-upload");
   var fileInput = document.getElementById("file-input");
   var tableBody = document.getElementById("file-table-body");
-  var validateButton = document.querySelector(".btn-secondary");
+  var validateButton = document.getElementById("btn-validate");
+  var submitButton = document.getElementById("btn-submit");
 
   var selectedFiles = [];
 
@@ -74,6 +83,9 @@ document.addEventListener("DOMContentLoaded", function () {
       tableBody.appendChild(emptyRow);
       if (validateButton) {
         validateButton.disabled = true;
+      }
+      if (submitButton) {
+        submitButton.disabled = true;
       }
       return;
     }
@@ -111,6 +123,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (validateButton) {
       validateButton.disabled = selectedFiles.length === 0;
+    }
+    if (submitButton) {
+      submitButton.disabled = true;
     }
   }
 
@@ -152,6 +167,21 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             statusCell.textContent = match.status === "ok" ? "校验通过" : match.reason || "校验失败";
           });
+          if (submitButton) {
+            var allOk = true;
+            var rowsAfter = tableBody.querySelectorAll("tr");
+            rowsAfter.forEach(function (row) {
+              var statusCell = row.cells && row.cells[2];
+              if (!statusCell) {
+                return;
+              }
+              var text = statusCell.textContent || "";
+              if (text !== "校验通过") {
+                allOk = false;
+              }
+            });
+            submitButton.disabled = !allOk || selectedFiles.length === 0;
+          }
         })
         .catch(function (error) {
           console.error(error);
@@ -162,6 +192,47 @@ document.addEventListener("DOMContentLoaded", function () {
             validateButton.disabled = selectedFiles.length === 0;
           }
         });
+    });
+  }
+
+  if (submitButton) {
+    submitButton.addEventListener("click", function () {
+      if (submitButton.disabled) {
+        return;
+      }
+      var deptSelect = document.querySelector(".batch-select");
+      var deptId = "";
+      var deptName = "";
+
+      if (deptSelect) {
+        deptId = deptSelect.value;
+        deptName = deptSelect.options[deptSelect.selectedIndex] && deptSelect.options[deptSelect.selectedIndex].text;
+
+        if (!deptId) {
+          alert("请先选择提报事业部");
+          return;
+        }
+      }
+
+      var okFiles = [];
+      var rows = tableBody.querySelectorAll("tr");
+      rows.forEach(function (row) {
+        var nameCell = row.cells && row.cells[0];
+        var statusCell = row.cells && row.cells[2];
+        if (!nameCell || !statusCell) {
+          return;
+        }
+        var statusText = statusCell.textContent || "";
+        if (statusText === "校验通过") {
+          okFiles.push(nameCell.textContent || "");
+        }
+      });
+
+      if (okFiles.length === 0) {
+        alert("没有校验通过的文件，无法提交审核");
+        return;
+      }
+      alert("已提交审核（当前仅做前端校验，占位，后续按业务表结构入库）");
     });
   }
 });

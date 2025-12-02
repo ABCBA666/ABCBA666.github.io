@@ -23,6 +23,12 @@ body {
   margin-bottom: 8px;
 }
 
+.report-page .page-header {
+  border-bottom: 2px dashed #bfbfbf;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
 .batch-header {
   display: flex;
   flex-direction: column;
@@ -61,12 +67,39 @@ body {
   justify-content: center;
 }
 
+.process-page .page-main {
+  justify-content: center;
+}
+
+.report-page .page-main {
+  justify-content: center;
+}
+
+.review-page .page-main {
+  justify-content: center;
+}
+
 .menu-section {
   width: 100%;
   max-width: 900px;
 }
 
 .batch-section {
+  width: 100%;
+  max-width: 800px;
+}
+
+.process-section {
+  width: 100%;
+  max-width: 800px;
+}
+
+.report-page .process-section {
+  width: 100%;
+  max-width: 800px;
+}
+
+.review-page .process-section {
   width: 100%;
   max-width: 800px;
 }
@@ -143,10 +176,20 @@ body {
   cursor: pointer;
 }
 
+.btn-primary:disabled {
+  background-color: #a7c5ff;
+  border-color: #a7c5ff;
+  cursor: not-allowed;
+}
+
 .btn-secondary {
-  border-color: #d9d9d9;
-  background-color: #f0f0f0;
-  color: #666666;
+  background-color: #ffffff;
+  color: #1890ff;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: #40a9ff;
+  color: #40a9ff;
 }
 
 .btn-secondary:disabled {
@@ -250,6 +293,92 @@ body {
   padding-top: 16px;
 }
 
+/* 我的处理页面 */
+.process-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.process-back {
+  align-self: flex-start;
+}
+
+.process-main {
+  justify-content: center;
+}
+
+.process-tabs {
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-top: 8px;
+}
+
+.process-tab {
+  position: relative;
+  padding: 6px 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  cursor: pointer;
+  color: #333333;
+}
+
+.process-tab.active {
+  color: #1890ff;
+}
+
+.process-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background-color: #1890ff;
+}
+
+.process-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+}
+
+.report-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+}
+
+.process-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.process-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #999999;
+}
+
+.process-empty-text {
+  margin: 0;
+  font-size: 14px;
+  color: #999999;
+}
+
 .bottom-action {
   display: flex;
   flex-direction: column;
@@ -297,6 +426,20 @@ body {
   .page-footer {
     gap: 20px;
     padding-top: 8px;
+  }
+
+  .process-tabs {
+    gap: 24px;
+    overflow-x: auto;
+    justify-content: center;
+  }
+
+  .process-content {
+    padding: 24px 0;
+  }
+
+  .report-content {
+    padding: 24px 0;
   }
 }
 
