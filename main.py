@@ -1,10 +1,46 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import os
 import pymysql
 from pymysql.cursors import DictCursor
 
-app = FastAPI(title="菜单系统后端")
+
+db_connection = None
+
+
+def _create_connection():
+    return pymysql.connect(
+        host="127.0.0.1",
+        port=3306,
+        user="root",
+        password="123456",
+        database="menu_system",
+        charset="utf8mb4",
+        cursorclass=DictCursor,
+        autocommit=True,
+    )
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global db_connection
+    if db_connection is None:
+        db_connection = _create_connection()
+    try:
+        yield
+    finally:
+        if db_connection is not None:
+            try:
+                db_connection.close()
+            except Exception:  # noqa: BLE001
+                pass
+            finally:
+                db_connection = None
+
+
+app = FastAPI(title="菜单系统后端", lifespan=lifespan)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,16 +52,10 @@ app.add_middleware(
 
 
 def get_connection():
-    return pymysql.connect(
-        host="127.0.0.1",
-        port=3306,
-        user="root",
-        password="123456",
-        database="menu_system",
-        charset="utf8mb4",
-        cursorclass=DictCursor,
-        autocommit=True,
-    )
+    global db_connection
+    if db_connection is None or not getattr(db_connection, "open", False):
+        db_connection = _create_connection()
+    return db_connection
 
 
 @app.get("/api/menu")
@@ -57,12 +87,9 @@ async def menu_item_detail(item_id: str):
 @app.get("/api/departments")
 def list_departments():
     conn = get_connection()
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT id, name FROM dept WHERE enabled = 1 ORDER BY id")
-            rows = cursor.fetchall()
-    finally:
-        conn.close()
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT id, name FROM dept WHERE enabled = 1 ORDER BY id")
+        rows = cursor.fetchall()
     return {"items": rows}
 
 
@@ -200,9 +227,17 @@ async def batch_upload(files: list[UploadFile] = File(...)):
                     ),
                 )
         finally:
-            try:
-                conn.close()
-            except Exception:  # noqa: BLE001
-                pass
+            pass
 
     return {"results": results}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "main:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=True,
+    )

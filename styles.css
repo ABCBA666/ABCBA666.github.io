@@ -429,9 +429,16 @@ body {
   }
 
   .process-tabs {
-    gap: 24px;
-    overflow-x: auto;
-    justify-content: center;
+    gap: 0;
+    justify-content: space-between;
+  }
+
+  /* 手机端：放大字体、增加间距、平分宽度并居中 */
+  .process-tab {
+    padding: 10px 0;
+    font-size: 16px;
+    flex: 1;
+    text-align: center;
   }
 
   .process-content {
