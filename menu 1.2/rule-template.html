@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>规则模版维护</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page batch-page">
+    <header class="page-header batch-header">
+      <div class="batch-back">
+        <a href="index.html" class="link-back">返回首页</a>
+      </div>
+      <h1 class="page-title">规则模版维护</h1>
+    </header>
+
+    <main class="page-main batch-main">
+      <section class="batch-section">
+        <div class="batch-field-row">
+          <label class="batch-label"><span class="required-mark">*</span>请先下载模版</label>
+        </div>
+
+        <div class="batch-field-row batch-download-row">
+          <!--<label class="batch-label">下载模板</label> -->
+          <div class="batch-download-links">
+            <a href="规则维护模版.xls" class="batch-link" download>规则维护模版.xls</a>
+          </div>
+        </div>
+
+        <div class="batch-upload-row">
+          <button type="button" class="btn-primary" id="btn-upload">点击上传</button>
+          <input type="file" id="file-input" class="batch-file-input" multiple style="display: none;" />
+        </div>
+
+        <div class="batch-table-wrapper">
+          <table class="batch-table" aria-label="上传文件列表">
+            <thead>
+              <tr>
+                <th>文件名</th>
+                <th>大小</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="file-table-body">
+              <tr class="batch-empty-row">
+                <td colspan="4" class="batch-empty-cell">点击上方“点击上传”按钮</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="batch-actions">
+          <button type="button" class="btn-secondary" disabled>校验文件</button>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>
