@@ -23,6 +23,27 @@ body {
   margin-bottom: 8px;
 }
 
+.batch-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.batch-back {
+  align-self: flex-start;
+}
+
+.link-back {
+  font-size: 14px;
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.link-back:hover {
+  text-decoration: underline;
+}
+
 .page-title {
   margin: 0;
   font-size: 24px;
@@ -36,9 +57,18 @@ body {
   justify-content: center;
 }
 
+.batch-page .page-main {
+  justify-content: center;
+}
+
 .menu-section {
   width: 100%;
   max-width: 900px;
+}
+
+.batch-section {
+  width: 100%;
+  max-width: 800px;
 }
 
 .menu-grid {
@@ -47,6 +77,125 @@ body {
   align-items: flex-start;
   gap: 56px;
   margin: 16px auto 4px;
+}
+
+.batch-main {
+  justify-content: center;
+}
+
+.batch-field-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.batch-label {
+  width: 96px;
+  font-size: 14px;
+  color: #333333;
+}
+
+.required-mark {
+  color: #ff4d4f;
+  margin-right: 2px;
+}
+
+.batch-select {
+  min-width: 260px;
+  padding: 6px 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.batch-download-row {
+  align-items: flex-start;
+}
+
+.batch-download-links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.batch-link {
+  font-size: 14px;
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.batch-link:hover {
+  text-decoration: underline;
+}
+
+.batch-upload-row {
+  margin: 16px 0;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 6px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #1890ff;
+  background-color: #1890ff;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  border-color: #d9d9d9;
+  background-color: #f0f0f0;
+  color: #666666;
+}
+
+.btn-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.batch-table-wrapper {
+  margin-top: 8px;
+  border: 1px solid #e5e5e5;
+}
+
+.batch-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.batch-table th,
+.batch-table td {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.batch-table thead {
+  background-color: #fafafa;
+}
+
+.batch-empty-row td {
+  text-align: center;
+  color: #999999;
+}
+
+.batch-actions {
+  margin-top: 16px;
+}
+
+.btn-link {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  color: #0066cc;
+  cursor: pointer;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
 }
 
 .menu-column {
