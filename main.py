@@ -87,6 +87,15 @@ async def batch_upload(files: list[UploadFile] = File(...)):
         status_value = "ok"
         reason_value = "校验通过，已保存"
 
+        # 根据文件名简单判断所属功能模块
+        module_code = "UNKNOWN"
+        if "规则" in name:
+            module_code = "RULE_TEMPLATE"
+        elif "批量新增" in name or "新增" in name:
+            module_code = "BATCH_PRODUCT_ADD"
+        elif "批量变更" in name or "变更" in name:
+            module_code = "BATCH_PRODUCT_UPDATE"
+
         # 读取内容以便获取实际大小
         try:
             content = await f.read()
@@ -118,10 +127,11 @@ async def batch_upload(files: list[UploadFile] = File(...)):
             "reason": reason_value,
         })
 
-        # 记录日志到数据库
+        # 记录文件级日志和上传任务到数据库
         try:
             conn = get_connection()
             with conn.cursor() as cursor:
+                # 文件级日志表（增加 module_code 字段，用于区分功能模块）
                 cursor.execute(
                     """
                     CREATE TABLE IF NOT EXISTS upload_log (
@@ -130,13 +140,64 @@ async def batch_upload(files: list[UploadFile] = File(...)):
                         size_bytes BIGINT NULL,
                         status VARCHAR(20) NOT NULL,
                         reason VARCHAR(255) NULL,
-                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                        module_code VARCHAR(50) NOT NULL DEFAULT 'UNKNOWN',
+                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        INDEX idx_upload_log_module (module_code)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
                     """
                 )
+
+                # 上传任务主表，用于按模块区分任务和统计信息
                 cursor.execute(
-                    "INSERT INTO upload_log (filename, size_bytes, status, reason) VALUES (%s, %s, %s, %s)",
-                    (name, size_bytes, status_value, reason_value),
+                    """
+                    CREATE TABLE IF NOT EXISTS upload_task (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        filename VARCHAR(255) NOT NULL,
+                        size_bytes BIGINT NULL,
+                        module_code VARCHAR(50) NOT NULL,
+                        template_code VARCHAR(50) NULL,
+                        status VARCHAR(20) NOT NULL,
+                        total_rows INT NULL,
+                        success_rows INT NULL,
+                        fail_rows INT NULL,
+                        message VARCHAR(500) NULL,
+                        created_by VARCHAR(50) NULL,
+                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                        INDEX idx_upload_task_module_status (module_code, status),
+                        INDEX idx_upload_task_created_at (created_at)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                    """
+                )
+
+                # 写入文件级日志（包含模块编码 module_code）
+                cursor.execute(
+                    "INSERT INTO upload_log (filename, size_bytes, status, reason, module_code) VALUES (%s, %s, %s, %s, %s)",
+                    (name, size_bytes, status_value, reason_value, module_code),
+                )
+
+                # 写入上传任务日志：此阶段仅记录文件级结果，不解析业务数据
+                task_status = "COMPLETED" if status_value == "ok" else "FAILED"
+                task_message = reason_value or ""
+                cursor.execute(
+                    """
+                    INSERT INTO upload_task (
+                        filename, size_bytes, module_code, template_code,
+                        status, total_rows, success_rows, fail_rows, message, created_by
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """,
+                    (
+                        name,
+                        size_bytes,
+                        module_code,
+                        None,
+                        task_status,
+                        None,
+                        None,
+                        None,
+                        task_message,
+                        None,
+                    ),
                 )
         finally:
             try:

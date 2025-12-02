@@ -13,34 +13,32 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
   var select = document.querySelector(".batch-select");
-  if (!select) {
-    return;
-  }
-
-  fetch("http://127.0.0.1:8000/api/departments")
-    .then(function (response) {
-      if (!response.ok) {
-        throw new Error("Failed to load departments");
-      }
-      return response.json();
-    })
-    .then(function (data) {
-      if (!data || !Array.isArray(data.items)) {
-        return;
-      }
-      while (select.options.length > 1) {
-        select.remove(1);
-      }
-      data.items.forEach(function (item) {
-        var option = document.createElement("option");
-        option.value = String(item.id);
-        option.textContent = item.name;
-        select.appendChild(option);
+  if (select) {
+    fetch("http://127.0.0.1:8000/api/departments")
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Failed to load departments");
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        if (!data || !Array.isArray(data.items)) {
+          return;
+        }
+        while (select.options.length > 1) {
+          select.remove(1);
+        }
+        data.items.forEach(function (item) {
+          var option = document.createElement("option");
+          option.value = String(item.id);
+          option.textContent = item.name;
+          select.appendChild(option);
+        });
+      })
+      .catch(function (error) {
+        console.error(error);
       });
-    })
-    .catch(function (error) {
-      console.error(error);
-    });
+  }
 
   var uploadButton = document.getElementById("btn-upload");
   var fileInput = document.getElementById("file-input");
