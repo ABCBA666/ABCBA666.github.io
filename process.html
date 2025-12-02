@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>我的处理</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page process-page">
+    <header class="page-header process-header">
+      <div class="process-back">
+        <a href="index.html" class="link-back">返回首页</a>
+      </div>
+      <h1 class="page-title">我的处理</h1>
+    </header>
+
+    <main class="page-main process-main">
+      <section class="process-section">
+        <div class="process-tabs" role="tablist">
+          <button class="process-tab active" type="button">未处理</button>
+          <button class="process-tab" type="button">已处理</button>
+          <button class="process-tab" type="button">待验收</button>
+        </div>
+
+        <div class="process-content">
+          <div class="process-empty" data-panel="pending">
+            <div class="process-empty-icon">📄</div>
+            <p class="process-empty-text">暂无未处理提报</p>
+          </div>
+
+          <div class="process-empty" data-panel="done" style="display: none;">
+            <div class="process-empty-icon">📁</div>
+            <p class="process-empty-text">暂无已处理记录</p>
+          </div>
+
+          <div class="process-empty" data-panel="accept" style="display: none;">
+            <div class="process-empty-icon">🔍</div>
+            <p class="process-empty-text">暂无待验收记录</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll('.process-tab');
+      var panels = {
+        "未处理": 'pending',
+        "已处理": 'done',
+        "待验收": 'accept'
+      };
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          tabs.forEach(function (t) { t.classList.remove('active'); });
+          tab.classList.add('active');
+
+          var key = tab.textContent || '';
+          var target = panels[key.trim()];
+          var emptyBlocks = document.querySelectorAll('.process-empty');
+          emptyBlocks.forEach(function (block) {
+            if (block.getAttribute('data-panel') === target) {
+              block.style.display = 'flex';
+            } else {
+              block.style.display = 'none';
+            }
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
